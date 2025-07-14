@@ -16,22 +16,22 @@ from backend.core.conf import settings
 
 def create_async_engine_and_session(url: str | URL) -> tuple[AsyncEngine, async_sessionmaker[AsyncSession]]:
     try:
-        # 数据库引擎
+        # Database engine
         engine = create_async_engine(
             url,
             echo=settings.DATABASE_ECHO,
             echo_pool=settings.DATABASE_POOL_ECHO,
             future=True,
-            # 中等并发
-            pool_size=10,  # 低：- 高：+
-            max_overflow=20,  # 低：- 高：+
-            pool_timeout=30,  # 低：+ 高：-
-            pool_recycle=3600,  # 低：+ 高：-
-            pool_pre_ping=True,  # 低：False 高：True
-            pool_use_lifo=False,  # 低：False 高：True
+            # Medium concurrency
+            pool_size=10,  # Low: - High: +
+            max_overflow=20,  # Low: - High: +
+            pool_timeout=30,  # Low: + High: -
+            pool_recycle=3600,  # Low: + High: -
+            pool_pre_ping=True,  # Low: False High: True
+            pool_use_lifo=False,  # Low: False High: True
         )
     except Exception as e:
-        log.error('❌ 数据库链接失败 {}', e)
+        log.error('❌ Database connection failed {}', e)
         sys.exit()
     else:
         db_session = async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
@@ -39,19 +39,19 @@ def create_async_engine_and_session(url: str | URL) -> tuple[AsyncEngine, async_
 
 
 async def get_db():
-    """session 生成器"""
+    """Session generator"""
     async with async_db_session() as session:
         yield session
 
 
 async def create_table() -> None:
-    """创建数据库表"""
+    """Create database tables"""
     async with async_engine.begin() as coon:
         await coon.run_sync(MappedBase.metadata.create_all)
 
 
 def uuid4_str() -> str:
-    """数据库引擎 UUID 类型兼容性解决方案"""
+    """Database engine UUID type compatibility solution"""
     return str(uuid4())
 
 

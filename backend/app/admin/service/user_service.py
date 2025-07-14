@@ -15,13 +15,13 @@ class UserService:
     async def register(*, obj: RegisterUserParam) -> None:
         async with async_db_session.begin() as db:
             if not obj.password:
-                raise errors.ForbiddenError(msg='密码为空')
+                raise errors.ForbiddenError(msg='Password is empty')
             username = await user_dao.get_by_username(db, obj.username)
             if username:
-                raise errors.ForbiddenError(msg='用户已注册')
+                raise errors.ForbiddenError(msg='User already registered')
             email = await user_dao.check_email(db, obj.email)
             if email:
-                raise errors.ForbiddenError(msg='邮箱已注册')
+                raise errors.ForbiddenError(msg='Email already registered')
             await user_dao.create(db, obj)
 
     @staticmethod
@@ -29,11 +29,11 @@ class UserService:
         async with async_db_session.begin() as db:
             user = await user_dao.get_by_username(db, obj.username)
             if not password_verify(obj.old_password, user.password):
-                raise errors.ForbiddenError(msg='原密码错误')
+                raise errors.ForbiddenError(msg='Old password is incorrect')
             np1 = obj.new_password
             np2 = obj.confirm_password
             if np1 != np2:
-                raise errors.ForbiddenError(msg='密码输入不一致')
+                raise errors.ForbiddenError(msg='Passwords do not match')
             new_pwd = get_hash_password(obj.new_password, user.salt)
             count = await user_dao.reset_password(db, user.id, new_pwd)
             return count
@@ -43,7 +43,7 @@ class UserService:
         async with async_db_session() as db:
             user = await user_dao.get_by_username(db, username)
             if not user:
-                raise errors.NotFoundError(msg='用户不存在')
+                raise errors.NotFoundError(msg='User does not exist')
             return user
 
     @staticmethod
@@ -51,16 +51,16 @@ class UserService:
         async with async_db_session.begin() as db:
             input_user = await user_dao.get_by_username(db, username=username)
             if not input_user:
-                raise errors.NotFoundError(msg='用户不存在')
+                raise errors.NotFoundError(msg='User does not exist')
             superuser_verify(input_user)
             if input_user.username != obj.username:
                 _username = await user_dao.get_by_username(db, obj.username)
                 if _username:
-                    raise errors.ForbiddenError(msg='用户名已注册')
+                    raise errors.ForbiddenError(msg='Username already registered')
             if input_user.email != obj.email:
                 email = await user_dao.check_email(db, obj.email)
                 if email:
-                    raise errors.ForbiddenError(msg='邮箱已注册')
+                    raise errors.ForbiddenError(msg='Email already registered')
             count = await user_dao.update_userinfo(db, input_user.id, obj)
             return count
 
@@ -69,7 +69,7 @@ class UserService:
         async with async_db_session.begin() as db:
             input_user = await user_dao.get_by_username(db, username)
             if not input_user:
-                raise errors.NotFoundError(msg='用户不存在')
+                raise errors.NotFoundError(msg='User does not exist')
             count = await user_dao.update_avatar(db, input_user.id, avatar)
             return count
 
@@ -83,6 +83,7 @@ class UserService:
             superuser_verify(current_user)
             input_user = await user_dao.get_by_username(db, username)
             if not input_user:
-                raise errors.NotFoundError(msg='用户不存在')
+                raise errors.NotFoundError(msg='User does not exist')
             count = await user_dao.delete(db, input_user.id)
             return count
+

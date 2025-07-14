@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
-# 项目根目录
+# Project root directory
 BASE_PATH = Path(__file__).resolve().parent.parent
 
-# alembic 迁移文件存放路径
+# Alembic migration files directory
 ALEMBIC_VERSION_DIR = BASE_PATH / 'alembic' / 'versions'
 
-# 日志文件路径
+# Log files directory
 LOG_DIR = BASE_PATH / 'log'
 
-# 静态资源目录
+# Static resources directory
 STATIC_DIR = BASE_PATH / 'static'

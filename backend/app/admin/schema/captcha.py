@@ -6,5 +6,5 @@ from backend.common.schema import SchemaBase
 
 
 class GetCaptchaDetail(SchemaBase):
-    image_type: str = Field(description='图片类型')
-    image: str = Field(description='图片内容')
+    image_type: str = Field(description='Image type')
+    image: str = Field(description='Image content')

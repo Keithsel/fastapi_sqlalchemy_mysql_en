@@ -22,11 +22,11 @@ class AuthService:
     async def user_verify(db: AsyncSession, username: str, password: str) -> User:
         user = await user_dao.get_by_username(db, username)
         if not user:
-            raise errors.NotFoundError(msg='用户名或密码有误')
+            raise errors.NotFoundError(msg='Incorrect username or password')
         elif not password_verify(password, user.password):
-            raise errors.AuthorizationError(msg='用户名或密码有误')
+            raise errors.AuthorizationError(msg='Incorrect username or password')
         elif not user.status:
-            raise errors.AuthorizationError(msg='用户已被锁定, 请联系统管理员')
+            raise errors.AuthorizationError(msg='User has been locked, please contact the system administrator')
         return user
 
     async def swagger_login(self, *, form_data: OAuth2PasswordRequestForm) -> tuple[str, User]:
@@ -43,9 +43,9 @@ class AuthService:
                 captcha_uuid = request.app.state.captcha_uuid
                 redis_code = await redis_client.get(f'{settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{captcha_uuid}')
                 if not redis_code:
-                    raise errors.ForbiddenError(msg='验证码失效，请重新获取')
+                    raise errors.ForbiddenError(msg='Captcha expired, please retrieve it again')
             except AttributeError:
-                raise errors.ForbiddenError(msg='验证码失效，请重新获取')
+                raise errors.ForbiddenError(msg='Captcha expired, please retrieve it again')
             if redis_code.lower() != obj.captcha.lower():
                 raise errors.CustomError(error=CustomErrorCode.CAPTCHA_ERROR)
             await user_dao.update_login_time(db, user.username, login_time=timezone.now())

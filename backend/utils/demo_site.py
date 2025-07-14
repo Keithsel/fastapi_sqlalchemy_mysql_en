@@ -7,7 +7,7 @@ from backend.core.conf import settings
 
 
 async def demo_site(request: Request):
-    """演示站点"""
+    """Demo site"""
 
     method = request.method
     path = request.url.path
@@ -17,4 +17,4 @@ async def demo_site(request: Request):
         and method != 'OPTIONS'
         and (method, path) not in settings.DEMO_MODE_EXCLUDE
     ):
-        raise errors.ForbiddenError(msg='演示环境下禁止执行此操作')
+        raise errors.ForbiddenError(msg='Operation is not allowed in demo environment')

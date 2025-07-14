@@ -20,13 +20,13 @@ from backend.app.admin.service.user_service import UserService
 router = APIRouter()
 
 
-@router.post('/register', summary='用户注册')
+@router.post('/register', summary='User registration')
 async def user_register(obj: RegisterUserParam) -> ResponseModel:
     await UserService.register(obj=obj)
     return response_base.success()
 
 
-@router.post('/password/reset', summary='密码重置', dependencies=[DependsJwtAuth])
+@router.post('/password/reset', summary='Password reset', dependencies=[DependsJwtAuth])
 async def password_reset(obj: ResetPassword) -> ResponseModel:
     count = await UserService.pwd_reset(obj=obj)
     if count > 0:
@@ -34,13 +34,13 @@ async def password_reset(obj: ResetPassword) -> ResponseModel:
     return response_base.fail()
 
 
-@router.get('/{username}', summary='查看用户信息', dependencies=[DependsJwtAuth])
+@router.get('/{username}', summary='View user info', dependencies=[DependsJwtAuth])
 async def get_user(username: str) -> ResponseSchemaModel[GetUserInfoDetail]:
     data = await UserService.get_userinfo(username=username)
     return response_base.success(data=data)
 
 
-@router.put('/{username}', summary='更新用户信息', dependencies=[DependsJwtAuth])
+@router.put('/{username}', summary='Update user info', dependencies=[DependsJwtAuth])
 async def update_userinfo(username: str, obj: UpdateUserParam) -> ResponseModel:
     count = await UserService.update(username=username, obj=obj)
     if count > 0:
@@ -48,7 +48,7 @@ async def update_userinfo(username: str, obj: UpdateUserParam) -> ResponseModel:
     return response_base.fail()
 
 
-@router.put('/{username}/avatar', summary='更新头像', dependencies=[DependsJwtAuth])
+@router.put('/{username}/avatar', summary='Update avatar', dependencies=[DependsJwtAuth])
 async def update_avatar(username: str, avatar: AvatarParam) -> ResponseModel:
     count = await UserService.update_avatar(username=username, avatar=avatar)
     if count > 0:
@@ -58,7 +58,7 @@ async def update_avatar(username: str, avatar: AvatarParam) -> ResponseModel:
 
 @router.get(
     '',
-    summary='（模糊条件）分页获取所有用户',
+    summary=' (Fuzzy search) Paginated retrieval of all users',
     dependencies=[
         DependsJwtAuth,
         DependsPagination,
@@ -77,8 +77,8 @@ async def get_all_users(
 
 @router.delete(
     path='/{username}',
-    summary='用户注销',
-    description='用户注销 != 用户登出，注销之后用户将从数据库删除',
+    summary='User deletion',
+    description='User deletion != user logout, after deletion the user will be removed from the database',
     dependencies=[DependsJwtAuth],
 )
 async def delete_user(current_user: CurrentUser, username: str) -> ResponseModel:

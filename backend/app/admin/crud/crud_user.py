@@ -16,7 +16,7 @@ from backend.common.security.jwt import get_hash_password
 class CRUDUser(CRUDPlus[User]):
     async def get(self, db: AsyncSession, user_id: int) -> User | None:
         """
-        获取用户
+        Get user
 
         :param db:
         :param user_id:
@@ -26,7 +26,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def get_by_username(self, db: AsyncSession, username: str) -> User | None:
         """
-        通过 username 获取用户
+        Get user by username
 
         :param db:
         :param username:
@@ -42,7 +42,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def create(self, db: AsyncSession, obj: RegisterUserParam) -> None:
         """
-        创建用户
+        Create user
 
         :param db:
         :param obj:
@@ -57,7 +57,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def update_userinfo(self, db: AsyncSession, input_user: int, obj: UpdateUserParam) -> int:
         """
-        更新用户信息
+        Update user info
 
         :param db:
         :param input_user:
@@ -68,7 +68,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def update_avatar(self, db: AsyncSession, input_user: int, avatar: AvatarParam) -> int:
         """
-        更新用户头像
+        Update user avatar
 
         :param db:
         :param input_user:
@@ -79,7 +79,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def delete(self, db: AsyncSession, user_id: int) -> int:
         """
-        删除用户
+        Delete user
 
         :param db:
         :param user_id:
@@ -89,7 +89,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def check_email(self, db: AsyncSession, email: str) -> User:
         """
-        检查邮箱是否存在
+        Check if email exists
 
         :param db:
         :param email:
@@ -99,7 +99,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def reset_password(self, db: AsyncSession, pk: int, new_pwd: str) -> int:
         """
-        重置用户密码
+        Reset user password
 
         :param db:
         :param pk:
@@ -110,7 +110,7 @@ class CRUDUser(CRUDPlus[User]):
 
     async def get_list(self, username: str = None, phone: str = None, status: int = None) -> Select:
         """
-        获取用户列表
+        Get user list
 
         :param username:
         :param phone:

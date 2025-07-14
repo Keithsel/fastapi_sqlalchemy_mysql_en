@@ -15,12 +15,12 @@ class _EnumBase:
 
 
 class IntEnum(_EnumBase, SourceIntEnum):
-    """整型枚举"""
+    """Integer Enum"""
 
     pass
 
 
 class StrEnum(_EnumBase, str, Enum):
-    """字符串枚举"""
+    """String Enum"""
 
     pass

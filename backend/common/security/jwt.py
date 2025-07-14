@@ -43,7 +43,7 @@ def password_verify(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(sub: str) -> str:
     """
-    Generate encryption token
+    Generate encrypted token
 
     :param sub: The subject/userid of the JWT
     :return:
@@ -55,14 +55,14 @@ def create_access_token(sub: str) -> str:
 
 def get_token(request: Request) -> str:
     """
-    Get token for request header
+    Get token from request header
 
     :return:
     """
     authorization = request.headers.get('Authorization')
     scheme, token = get_authorization_scheme_param(authorization)
     if not authorization or scheme.lower() != 'bearer':
-        raise TokenError(msg='Token 无效')
+        raise TokenError(msg='Invalid token')
     return token
 
 
@@ -77,17 +77,17 @@ def jwt_decode(token: str) -> int:
         payload = jwt.decode(token, settings.TOKEN_SECRET_KEY, algorithms=[settings.TOKEN_ALGORITHM])
         user_id = int(payload.get('sub'))
         if not user_id:
-            raise TokenError(msg='Token 无效')
+            raise TokenError(msg='Invalid token')
     except ExpiredSignatureError:
-        raise TokenError(msg='Token 已过期')
+        raise TokenError(msg='Token expired')
     except (JWTError, Exception):
-        raise TokenError(msg='Token 无效')
+        raise TokenError(msg='Invalid token')
     return user_id
 
 
 async def get_current_user(db: CurrentSession, token: str = Depends(oauth2_schema)) -> User:
     """
-    通过 token 获取当前用户
+    Get current user by token
 
     :param db:
     :param token:
@@ -98,15 +98,15 @@ async def get_current_user(db: CurrentSession, token: str = Depends(oauth2_schem
 
     user = await user_dao.get(db, user_id)
     if not user:
-        raise TokenError(msg='Token 无效')
+        raise TokenError(msg='Invalid token')
     if not user.status:
-        raise AuthorizationError(msg='用户已被锁定，请联系系统管理员')
+        raise AuthorizationError(msg='User has been locked, please contact the system administrator')
     return user
 
 
 def superuser_verify(user: User):
     """
-    验证当前用户是否为超级用户
+    Verify if the current user is a superuser
 
     :param user:
     :return:
@@ -117,7 +117,7 @@ def superuser_verify(user: User):
     return superuser
 
 
-# 用户依赖注入
+# User dependency injection
 CurrentUser = Annotated[User, Depends(get_current_user)]
-# 权限依赖注入
+# Permission dependency injection
 DependsJwtAuth = Depends(get_current_user)

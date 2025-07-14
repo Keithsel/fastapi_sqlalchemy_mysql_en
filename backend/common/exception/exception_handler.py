@@ -17,12 +17,12 @@ from backend.utils.serializers import MsgSpecJSONResponse
 
 def _get_exception_code(status_code: int):
     """
-    获取返回状态码, OpenAPI, Uvicorn... 可用状态码基于 RFC 定义, 详细代码见下方链接
+    Get the return status code. OpenAPI, Uvicorn, etc. use status codes based on RFC definitions.
+    See the links below for detailed codes:
 
-    `python 状态码标准支持 <https://github.com/python/cpython/blob/6e3cc72afeaee2532b4327776501eb8234ac787b/Lib/http
-    /__init__.py#L7>`__
+    `Python status code standard support <https://github.com/python/cpython/blob/6e3cc72afeaee2532b4327776501eb8234ac787b/Lib/http/__init__.py#L7>`__
 
-    `IANA 状态码注册表 <https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml>`__
+    `IANA status code registry <https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml>`__
 
     :param status_code:
     :return:
@@ -38,7 +38,7 @@ def _get_exception_code(status_code: int):
 
 async def _validation_exception_handler(request: Request, e: RequestValidationError | ValidationError):
     """
-    数据验证异常处理
+    Data validation exception handler
 
     :param e:
     :return:
@@ -60,13 +60,13 @@ async def _validation_exception_handler(request: Request, e: RequestValidationEr
         errors.append(error)
     error = errors[0]
     if error.get('type') == 'json_invalid':
-        message = 'json解析失败'
+        message = 'JSON parsing failed'
     else:
         error_input = error.get('input')
         field = str(error.get('loc')[-1])
         error_msg = error.get('msg')
-        message = f'{field} {error_msg}，输入：{error_input}' if settings.ENVIRONMENT == 'dev' else error_msg
-    msg = f'请求参数非法: {message}'
+        message = f'{field} {error_msg}, input: {error_input}' if settings.ENVIRONMENT == 'dev' else error_msg
+    msg = f'Invalid request parameter: {message}'
     data = {'errors': errors} if settings.ENVIRONMENT == 'dev' else None
     content = {
         'code': StandardResponseCode.HTTP_422,
@@ -80,7 +80,7 @@ def register_exception(app: FastAPI):
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):
         """
-        全局HTTP异常处理
+        Global HTTP exception handler
 
         :param request:
         :param exc:
@@ -104,7 +104,7 @@ def register_exception(app: FastAPI):
     @app.exception_handler(RequestValidationError)
     async def fastapi_validation_exception_handler(request: Request, exc: RequestValidationError):
         """
-        fastapi 数据验证异常处理
+        FastAPI data validation exception handler
 
         :param request:
         :param exc:
@@ -115,7 +115,7 @@ def register_exception(app: FastAPI):
     @app.exception_handler(ValidationError)
     async def pydantic_validation_exception_handler(request: Request, exc: ValidationError):
         """
-        pydantic 数据验证异常处理
+        Pydantic data validation exception handler
 
         :param request:
         :param exc:
@@ -126,7 +126,7 @@ def register_exception(app: FastAPI):
     @app.exception_handler(AssertionError)
     async def assertion_error_handler(request: Request, exc: AssertionError):
         """
-        断言错误处理
+        Assertion error handler
 
         :param request:
         :param exc:
@@ -149,7 +149,7 @@ def register_exception(app: FastAPI):
     @app.exception_handler(BaseExceptionMixin)
     async def custom_exception_handler(request: Request, exc: BaseExceptionMixin):
         """
-        全局自定义异常处理
+        Global custom exception handler
 
         :param request:
         :param exc:
@@ -169,7 +169,7 @@ def register_exception(app: FastAPI):
     @app.exception_handler(Exception)
     async def all_unknown_exception_handler(request: Request, exc: Exception):
         """
-        全局未知异常处理
+        Global unknown exception handler
 
         :param request:
         :param exc:
@@ -194,7 +194,7 @@ def register_exception(app: FastAPI):
         @app.exception_handler(StandardResponseCode.HTTP_500)
         async def cors_custom_code_500_exception_handler(request, exc):
             """
-            跨域自定义 500 异常处理
+            Custom 500 exception handler for CORS
 
             `Related issue <https://github.com/encode/starlette/issues/1175>`_
             `Solution <https://github.com/fastapi/fastapi/discussions/7847#discussioncomment-5144709>`_

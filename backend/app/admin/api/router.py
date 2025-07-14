@@ -9,4 +9,4 @@ from backend.core.conf import settings
 v1 = APIRouter(prefix=settings.FASTAPI_API_V1_PATH)
 
 v1.include_router(auth_router)
-v1.include_router(user_router, prefix='/users', tags=['用户'])
+v1.include_router(user_router, prefix='/users', tags=['User'])

@@ -13,19 +13,19 @@ from backend.core.conf import settings
 
 class InterceptHandler(logging.Handler):
     """
-    日志拦截处理器，用于将标准库的日志重定向到 loguru
+    Log interception handler, used to redirect standard library logs to loguru.
 
-    参考：https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
+    Reference: https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
     """
 
     def emit(self, record: logging.LogRecord):
-        # 获取对应的 Loguru 级别（如果存在）
+        # Get the corresponding Loguru level (if it exists)
         try:
             level = logger.level(record.levelname).name
         except ValueError:
             level = record.levelno
 
-        # 查找记录日志消息的调用者
+        # Find the caller that logged the message
         frame, depth = inspect.currentframe(), 0
         while frame and (depth == 0 or frame.f_code.co_filename == logging.__file__):
             frame = frame.f_back
@@ -36,17 +36,17 @@ class InterceptHandler(logging.Handler):
 
 def setup_logging() -> None:
     """
-    设置日志处理器
+    Set up log handlers.
 
-    参考：
+    References:
     - https://github.com/benoitc/gunicorn/issues/1572#issuecomment-638391953
     - https://github.com/pawamoy/pawamoy.github.io/issues/17
     """
-    # 设置根日志处理器和级别
+    # Set root log handler and level
     logging.root.handlers = [InterceptHandler()]
     logging.root.setLevel(settings.LOG_STD_LEVEL)
 
-    # 配置日志传播规则
+    # Configure log propagation rules
     for name in logging.root.manager.loggerDict.keys():
         logging.getLogger(name).handlers = []
         if 'uvicorn.access' in name or 'watchfiles.main' in name:
@@ -57,8 +57,8 @@ def setup_logging() -> None:
         # Debug log handlers
         # logging.debug(f'{logging.getLogger(name)}, {logging.getLogger(name).propagate}')
 
-    # 配置 loguru 处理器
-    logger.remove()  # 移除默认处理器
+    # Configure loguru handler
+    logger.remove()  # Remove default handler
     logger.configure(
         handlers=[
             {
@@ -71,16 +71,16 @@ def setup_logging() -> None:
 
 
 def set_custom_logfile():
-    """设置自定义日志文件"""
+    """Set custom log files."""
     log_path = path_conf.LOG_DIR
     if not os.path.exists(log_path):
         os.mkdir(log_path)
 
-    # 日志文件
+    # Log files
     log_access_file = os.path.join(log_path, settings.LOG_ACCESS_FILENAME)
     log_error_file = os.path.join(log_path, settings.LOG_ERROR_FILENAME)
 
-    # 日志文件通用配置
+    # Common log file configuration
     # https://loguru.readthedocs.io/en/stable/api/logger.html#loguru._logger.Logger.add
     log_config = {
         'format': settings.LOG_FILE_FORMAT,
@@ -90,7 +90,7 @@ def set_custom_logfile():
         'compression': 'tar.gz',
     }
 
-    # 标准输出文件
+    # Standard output file
     logger.add(
         str(log_access_file),
         level=settings.LOG_ACCESS_FILE_LEVEL,
@@ -100,7 +100,7 @@ def set_custom_logfile():
         **log_config,
     )
 
-    # 标准错误文件
+    # Standard error file
     logger.add(
         str(log_error_file),
         level=settings.LOG_ERROR_FILE_LEVEL,

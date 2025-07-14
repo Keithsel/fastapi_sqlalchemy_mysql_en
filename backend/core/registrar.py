@@ -22,15 +22,15 @@ from backend.utils.openapi import simplify_operation_ids
 @asynccontextmanager
 async def register_init(app: FastAPI):
     """
-    启动初始化
+    Startup initialization
 
     :return:
     """
-    # 创建数据库表
+    # Create database tables
     await create_table()
-    # 连接 redis
+    # Connect to redis
     await redis_client.open()
-    # 初始化 limiter
+    # Initialize limiter
     await FastAPILimiter.init(
         redis_client,
         prefix=settings.REQUEST_LIMITER_REDIS_PREFIX,
@@ -39,9 +39,9 @@ async def register_init(app: FastAPI):
 
     yield
 
-    # 关闭 redis 连接
+    # Close redis connection
     await redis_client.close()
-    # 关闭 limiter
+    # Close limiter
     await FastAPILimiter.close()
 
 
@@ -57,7 +57,7 @@ def register_app():
         lifespan=register_init,
     )
 
-    # 注册组件
+    # Register components
     register_logger()
     register_static_file(app)
     register_middleware(app)
@@ -70,7 +70,7 @@ def register_app():
 
 def register_logger() -> None:
     """
-    系统日志
+    System logging
 
     :return:
     """
@@ -80,7 +80,8 @@ def register_logger() -> None:
 
 def register_static_file(app: FastAPI):
     """
-    静态文件交互开发模式, 生产将自动关闭，生产必须使用 nginx 静态资源服务
+    Static file interaction in development mode, will be automatically disabled in production.
+    In production, you must use nginx for static resource service.
 
     :param app:
     :return:
@@ -95,12 +96,12 @@ def register_static_file(app: FastAPI):
 
 
 def register_middleware(app) -> None:
-    # 接口访问日志
+    # API access logging
     if settings.MIDDLEWARE_ACCESS:
         from backend.middleware.access_middle import AccessMiddleware
 
         app.add_middleware(AccessMiddleware)
-    # 跨域
+    # CORS
     if settings.MIDDLEWARE_CORS:
         from starlette.middleware.cors import CORSMiddleware
 
@@ -115,7 +116,7 @@ def register_middleware(app) -> None:
 
 def register_router(app: FastAPI):
     """
-    路由
+    Router
 
     :param app: FastAPI
     :return:
@@ -132,7 +133,7 @@ def register_router(app: FastAPI):
 
 def register_page(app: FastAPI):
     """
-    分页查询
+    Pagination query
 
     :param app:
     :return:

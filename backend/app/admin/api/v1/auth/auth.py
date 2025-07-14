@@ -13,18 +13,18 @@ from backend.app.admin.schema.user import AuthLoginParam
 router = APIRouter()
 
 
-@router.post('/login/swagger', summary='swagger 调试专用', description='用于快捷进行 swagger 认证')
+@router.post('/login/swagger', summary='For Swagger debugging', description='Used for quick Swagger authentication')
 async def swagger_login(form_data: OAuth2PasswordRequestForm = Depends()) -> GetSwaggerToken:
     token, user = await auth_service.swagger_login(form_data=form_data)
     return GetSwaggerToken(access_token=token, user=user)  # type: ignore
 
 
-@router.post('/login', summary='验证码登录')
+@router.post('/login', summary='Login with captcha')
 async def user_login(request: Request, obj: AuthLoginParam) -> ResponseSchemaModel[GetLoginToken]:
     data = await auth_service.login(request=request, obj=obj)
     return response_base.success(data=data)
 
 
-@router.post('/logout', summary='用户登出', dependencies=[DependsJwtAuth])
+@router.post('/logout', summary='User logout', dependencies=[DependsJwtAuth])
 async def user_logout() -> ResponseModel:
     return response_base.success()

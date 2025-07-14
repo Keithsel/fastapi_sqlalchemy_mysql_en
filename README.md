@@ -1,60 +1,60 @@
 # FastAPI SQLAlchemy MySQL
 
-## 本地开发
+## Local Development
 
 * Python 3.10+
-* Mysql 8.0+
-* Redis 推荐最新稳定版
+* MySQL 8.0+
+* Redis (latest stable version recommended)
 
-1. 安装依赖项
+1. Install dependencies
 
    ```shell
    pip install -r requirements.txt
    ```
 
-2. 创建一个数据库 `fsm`, 选择 `utf8mb4` 编码
-3. 安装启动 Redis
-4. 进入 backend 目录
+2. Create a database named `fsm` with `utf8mb4` encoding
+3. Install and start Redis
+4. Enter the backend directory
 
    ```shell
    cd backend
    ```
 
-5. 创建一个 `.env` 文件
+5. Create a `.env` file
 
    ```shell
    touch .env
    cp .env.example .env
    ```
 
-6. 按需修改配置文件 `core/conf.py` 和 `.env`
-7. 数据库迁移 [alembic](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
+6. Modify the configuration files `core/conf.py` and `.env` as needed
+7. Database migration with [alembic](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
 
     ```shell
-    # 生成迁移文件
+    # Generate migration file
     alembic revision --autogenerate
     
-    # 执行迁移
+    # Apply migration
     alembic upgrade head
     ```
 
-8. 启动 fastapi 服务
+8. Start the FastAPI service
 
    ```shell
-   # 帮助
+   # Help
    fastapi --help
    
-   # 开发模式
+   # Development mode
    fastapi dev main.py
    ```
 
-9. 浏览器访问: http://127.0.0.1:8000/docs
+9. Visit in browser: http://127.0.0.1:8000/docs
 
 ---
 
 ### Docker
 
-1. 进入 `docker-compose.yml` 文件所在目录，创建环境变量文件 `.env`
+1. Go to the directory containing the `docker-compose.yml` file and create the environment variable file `.env`
 
    ```shell
    cd deploy/docker-compose/
@@ -62,20 +62,20 @@
    cp .env.server ../../backend/.env
    ```
 
-2. 执行一键启动命令
+2. Run the one-click startup command
 
    ```shell
-   # 根据情况使用 sudo
+   # Use sudo if necessary
    docker-compose up -d --build
    ```
 
-3. 等待命令自动完成
-4. 浏览器访问：http://127.0.0.1:8000/docs
+3. Wait for the command to complete automatically
+4. Visit in browser: http://127.0.0.1:8000/docs
 
-## 赞助
+## Sponsor
 
-如果此项目能够帮助到你，你可以赞助作者一些咖啡豆表示鼓励：[:coffee: Sponsor :coffee:](https://wu-clan.github.io/sponsor/)
+If this project helps you, you can sponsor the author with some coffee beans as encouragement: [:coffee: Sponsor :coffee:](https://wu-clan.github.io/sponsor/)
 
-## 许可证
+## License
 
-本项目根据 MIT 许可证的条款进行许可
+This project is licensed under the terms of the MIT License.
