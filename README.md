@@ -1,5 +1,7 @@
 # FastAPI SQLAlchemy MySQL
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Keithsel/fastapi_sqlalchemy_mysql_en)
+
 ## Local Development
 
 * Python 3.10+
